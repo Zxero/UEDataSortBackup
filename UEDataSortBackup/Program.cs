@@ -19,7 +19,17 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
 
                 foreach (string path in toSort)
                 {
-                    Console.WriteLine("{0}", path.Substring(path.LastIndexOf("C") + 1));
+                    string folderName = path;
+                    string[] result = path.Split('_');
+                    string dateTime = result[1];
+                    string[] resultTwo = dateTime.Split(' ');
+                    string date = resultTwo[0];
+
+                    Console.WriteLine(dateTime);
+                    Console.WriteLine(date);
+                    Console.WriteLine(folderName);
+                    Console.ReadLine();
+
                 }
                 Console.WriteLine("{0} directories found.", toSort.Count);
             }
