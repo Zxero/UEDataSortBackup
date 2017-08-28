@@ -5,17 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Configuration;
+using System.Collections.Specialized;
 
-namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folders.
+namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folders
 {
     class DataSort
     {
         static void Main(string[] args)
         {
+            DeleteEmpty deleteEmpty = new DeleteEmpty();
             try
             {
-                string sortPath = @"C:\UE1 Data\Results";//Path of results. Need to create config file for this.
-                List<string> toSort = new List<string>(Directory.EnumerateDirectories(sortPath, "*_*"));//Creating array of all directories in sortPath.
+                string sortPath = ConfigurationManager.AppSettings.Get("sortPath");//Load sortPath from config!
+                List<string> toSort = new List<string>(Directory.EnumerateDirectories(sortPath, "*_*"));//Creating array of all directories in sortPath
 
                 foreach (string path in toSort)//for each entry in the array we do the following:
                 {
@@ -50,14 +53,7 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
                         DirectoryInfo di = new DirectoryInfo(path);
                     }
                 }
-                foreach (var directory in Directory.GetDirectories(sortPath))//delete empty directories in sortPath
-                {
-                    if (Directory.GetFiles(directory).Length == 0 &&
-                        Directory.GetDirectories(directory).Length == 0)
-                    {
-                        Directory.Delete(directory, false);
-                    }
-                }
+                deleteEmpty.deleteEmptyDir();//Calls DeleteEmpty to delete all empty directories in sortPath              
             }
             catch (Exception e)
             {
