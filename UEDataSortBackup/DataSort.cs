@@ -28,7 +28,6 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
                     }
                     else
                     {
-
                         string[] result = path.Split('_', ' ', '\\', '-');//Split each path by the criteria outlined
                         string newPath = result[0] + '\\' + result[1] + ' ' + result[2] + '\\' + result[3]
                             + '\\' + result[5] + '\\' + result[6] + '\\' + result[7] + '\\' + result[4]
@@ -48,8 +47,12 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
                             File.Move(dirPath, dirPath.Replace(path, newPath));//moves all files from original directory to new directory
                         DirectoryInfo di = new DirectoryInfo(path);
                     }
+                    if (Directory.GetFiles(path).Length == 0 &&
+                    Directory.GetDirectories(path).Length == 0)//delete the old directory in results, but only if its empty
+                    {
+                        Directory.Delete(path, false);
+                    }
                 }
-                deleteEmpty.deleteEmptyDir();//Calls DeleteEmpty to delete all empty directories in sortPath              
             }
             catch (Exception e)
             {

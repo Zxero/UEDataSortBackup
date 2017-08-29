@@ -48,7 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeleteEmpty.cs" />
     <Compile Include="DataSort.cs" />
     <Compile Include="SortBackupFrontPanel.cs">
       <SubType>Form</SubType>
