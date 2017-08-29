@@ -10,7 +10,6 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
     {
         static void Main(string[] args)
         {
-            DeleteEmpty deleteEmpty = new DeleteEmpty();
             try
             {
                 string sortPath = ConfigurationManager.AppSettings.Get("sortPath");//Load sortPath from config!
