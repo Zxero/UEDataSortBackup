@@ -13,7 +13,7 @@ namespace UEDataSortBackup
 {
     class DataSync
     {
-        public static void Sync(string[] args)
+        public static void Main(string[] args)
         {
             string RelicaRootPath = ConfigurationManager.AppSettings.Get("sortPath");//Load sortPath from config
 
@@ -33,6 +33,24 @@ namespace UEDataSortBackup
             catch (Exception e)
             {
                 Debug.WriteLine("\nException from File Sync Provider:\n" + e.ToString());
+            }
+        }
+        public static void DetectChangesOnFileSystemReplica(
+        string replicaRootPath,
+        FileSyncScopeFilter filter, FileSyncOptions options)
+        {
+            FileSyncProvider provider = null;
+
+            try
+            {
+                provider = new FileSyncProvider(replicaRootPath, filter, options);
+                provider.DetectChanges();
+            }
+            finally
+            {
+                // Release resources.
+                if (provider != null)
+                    provider.Dispose();
             }
         }
     }
