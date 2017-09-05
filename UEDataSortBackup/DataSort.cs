@@ -38,7 +38,7 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
                             x = x + 1;
                             newPath = result[0] + '\\' + result[1] + ' ' + result[2] + '\\' + result[3]
                             + '\\' + result[5] + '\\' + result[6] + '\\' + result[7] + '\\' + result[4]
-                            + '_' + result[5] + '-' + result[6] + '-' + result[7] + ' ' + result[8] + " DUPE" + x;//creates dupe if directory exists. loops, adding 1 to dupe until its open
+                            + '_' + result[5] + '-' + result[6] + '-' + result[7] + ' ' + result[8] + " DUPE" + x;//creates dupe if directory exists. loops, adding 1 to dupe until its available
                         }
                         Directory.CreateDirectory(newPath);//creates new directory
 
