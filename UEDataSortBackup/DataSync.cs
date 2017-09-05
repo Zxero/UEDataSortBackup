@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Files;
 using System.Configuration;
@@ -9,13 +11,16 @@ namespace UEDataSortBackup
 {
     class DataSync
     {
-        public static void Sync(string[] args)
+        private static readonly log4net.ILog log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public static void Main(string[] args)
         {
+            string replica1RootPath = ConfigurationManager.AppSettings.Get("sortPath");//Load sortPath from config
+            string replica2RootPath = ConfigurationManager.AppSettings.Get("syncPath");//Load syncPath from config
+
             try
             {
-                string replica1RootPath = ConfigurationManager.AppSettings.Get("sortPath");//Load sortPath from config
-                string replica2RootPath = ConfigurationManager.AppSettings.Get("syncPath");//Load syncPath from config
-
                 //set options variable. Refer to MSDN on each of these do
                 FileSyncOptions options = FileSyncOptions.ExplicitDetectChanges |
                     FileSyncOptions.RecycleDeletedFiles | FileSyncOptions.RecyclePreviousFileOnUpdates |
@@ -39,8 +44,9 @@ namespace UEDataSortBackup
             }
             catch (Exception e)
             {
-                Debug.WriteLine("\nException from File Sync Provider:\n" + e.ToString());
+                log.Info("\nException from File Sync Provider:\n" + e.ToString());
             }
+            Console.ReadLine();
         }
 
         public static void DetectChangesOnFileSystemReplica(
@@ -111,16 +117,16 @@ namespace UEDataSortBackup
             switch (args.ChangeType)
             {
                 case ChangeType.Create:
-                    Console.WriteLine("-- Applied CREATE for file " + args.NewFilePath);
+                    log.Info("-- Applied CREATE for file " + args.NewFilePath);
                     break;
                 case ChangeType.Delete:
-                    Console.WriteLine("-- Applied DELETE for file " + args.OldFilePath);
+                    log.Info("-- Applied DELETE for file " + args.OldFilePath);
                     break;
                 case ChangeType.Update:
-                    Console.WriteLine("-- Applied OVERWRITE for file " + args.OldFilePath);
+                    log.Info("-- Applied OVERWRITE for file " + args.OldFilePath);
                     break;
                 case ChangeType.Rename:
-                    Console.WriteLine("-- Applied RENAME for file " + args.OldFilePath +
+                    log.Info("-- Applied RENAME for file " + args.OldFilePath +
                                       " as " + args.NewFilePath);
                     break;
             }
@@ -129,12 +135,12 @@ namespace UEDataSortBackup
         // Provide error information for any changes that were skipped.
         public static void OnSkippedChange(object sender, SkippedChangeEventArgs args)
         {
-            Console.WriteLine("-- Skipped applying " + args.ChangeType.ToString().ToUpper()
+            log.Info("-- Skipped applying " + args.ChangeType.ToString().ToUpper()
                   + " for " + (!string.IsNullOrEmpty(args.CurrentFilePath) ?
                                 args.CurrentFilePath : args.NewFilePath) + " due to error");
 
             if (args.Exception != null)
-                Console.WriteLine("   [" + args.Exception.Message + "]");
+                log.Info("   [" + args.Exception.Message + "]");
         }
 
         // By default, conflicts are resolved in favor of the last writer. In this example,
@@ -143,13 +149,13 @@ namespace UEDataSortBackup
         public static void OnItemConflicting(object sender, ItemConflictingEventArgs args)
         {
             args.SetResolutionAction(ConflictResolutionAction.SourceWins);
-            Console.WriteLine("-- Concurrency conflict detected for item " + args.DestinationChange.ItemId.ToString());
+            log.Info("-- Concurrency conflict detected for item " + args.DestinationChange.ItemId.ToString());
         }
 
         public static void OnItemConstraint(object sender, ItemConstraintEventArgs args)
         {
             args.SetResolutionAction(ConstraintConflictResolutionAction.SourceWins);
-            Console.WriteLine("-- Constraint conflict detected for item " + args.DestinationChange.ItemId.ToString());
+            log.Info("-- Constraint conflict detected for item " + args.DestinationChange.ItemId.ToString());
         }
     }
 }

@@ -9,7 +9,7 @@ namespace UEDataSortBackup //goal: sort results folder into Year>Month>Day folde
 {
     class DataSort
     {
-        static void Main(string[] args)
+        static void Sort(string[] args)
         {            
             try
             {
